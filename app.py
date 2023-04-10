@@ -1,5 +1,43 @@
 import streamlit as st
 import pandas as pd
+import pandas as pd
+import requests
+import os
+import io
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
+
+# Get the API key from the environment variable
+api_key = os.getenv("API_KEY")
+
+
+def load_updated_data():
+    # Replace this with the API URL for the CSV data
+    api_url = "https://api.moda.wfp.org/api/v1/forms/48874?format=csv&include_labels=true"
+    headers = {'Authorization':f'Token {api_key}'}
+
+    # Send an HTTP request to the API
+    response = requests.get(api_url, headers=headers)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Load the CSV data into a pandas DataFrame
+        csv_data = response.content.decode("utf-8")
+        dataframe = pd.read_csv(io.StringIO(csv_data))
+        print(dataframe.head())
+        return dataframe
+    else:
+        print(f"Failed to fetch CSV data. Status code: {response.status_code}")
+    
+
+if st.sidebar.button('Get latest data'):
+    # Load the CSV data
+    df = load_updated_data()
+    df.to_csv('fc_status.csv', index=False)
+    st.sidebar.write('Data updated successfully.')
+
 
 
 # Create a function to display the data based on column index and column titles
