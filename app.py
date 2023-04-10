@@ -71,7 +71,20 @@ df_filtered = df[(df['province'] == province) & (df['district'] == district) & (
 if st.sidebar.button('Show Data'):
     # Get the dataframe without the first row
     # df_data = df_filtered.iloc[1:]
-    
-    # Loop through the columns and display the data
-    for i in range(len(df_filtered.columns)):
-        display_data(df_filtered, df_title, i)
+    if (len(df_filtered) > 0):
+        st.sidebar.write(f'{len(df_filtered)} records found. Showing the all records.')
+        # Loop through each row in df_filtered
+        for j in range(len(df_filtered)):
+        
+        # Get the row data as a series
+            row = df_filtered.iloc[j]
+        
+        # Loop through each column and display the data
+        #  add a break line
+            st.markdown(f"<h2 style='text-align: center; color: #008080;'>Response {j+1}</h2>", unsafe_allow_html=True)
+            for i in range(len(df_filtered.columns)):
+                display_data(pd.DataFrame(row).T, df_title, i)
+    else:
+        st.sidebar.write('Showing the record.')
+        for i in range(len(df_filtered.columns)):
+            display_data(df_filtered, df_title, i)
